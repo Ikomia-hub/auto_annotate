@@ -6,7 +6,7 @@ Auto-annotate images using a text prompt. GroundingDINO is employed for object d
 ## :rocket: Ikomia API
 
 ### :wrench: Parameters
-- **classes**: list of classes(string) or path to file.txt (see template utils/classes_list_template.txt).
+- **classes**: list of classes (string) or path to file.txt (see template utils/classes_list_template.txt).
 - **task**: 'object detection' or 'segmentation'.
 - **dataset_split_ratio**: Image split between train and test coco annotations.
 - **model_name_grounding_dino**: 'Swin-T- or 'Swin-B'.
@@ -37,7 +37,7 @@ annotate = wf.add_task(ik.auto_annotate(
     classes = 'car, person, dog, chair',
     task = 'object detection',
     dataset_split_ratio = "0.8",
-    model_name_grounding_dino = "Swin-T",
+    model_name_grounding_dino = "Swin-B",
     model_name_sam = "vit_l",
     conf_thres = "0.50",
     conf_thres_text = "0.25",

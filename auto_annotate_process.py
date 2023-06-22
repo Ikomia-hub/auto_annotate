@@ -43,7 +43,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.classes = 'car, person, dog, chair'
         self.task = 'object detection'
         self.dataset_split_ratio = 0.8
-        self.model_name_grounding_dino = "Swin-T"
+        self.model_name_grounding_dino = "Swin-B"
         self.model_name_sam = "vit_l"
         self.conf_thres = 0.50
         self.conf_thres_text = 0.25
