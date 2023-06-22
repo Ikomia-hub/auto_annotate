@@ -1,0 +1,7 @@
+car
+dog
+person
+nose
+chair
+shoe
+ear
