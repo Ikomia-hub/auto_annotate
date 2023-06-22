@@ -265,20 +265,20 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
                                 "Pascal VOC format and COCO format. The COCO annotation (.json) is " \
                                 "compatible with the Ikomia 'dataset_coco' dataloader."
         # relative path -> as displayed in Ikomia application process tree
+        self.info.icon_path = "icons/icon.png"
         self.info.path = "Plugins/Python/Dataset"
         self.info.version = "1.0.0"
-        # self.info.icon_path = "your path to a specific icon"
-        self.info.authors = "algorithm author"
-        self.info.article = "title of associated research article"
-        self.info.journal = "publication journal"
+        self.info.authors = "Liu et al. (GroundingDINO), Kirillov et al. (SAM)"
+        self.info.article = ""
+        self.info.journal = "ArXiv"
         self.info.year = 2023
-        self.info.license = "MIT License"
+        self.info.license = "Apache 2.0"
         # URL of documentation
         self.info.documentation_link = ""
         # Code source repository
         self.info.repository = ""
         # Keywords used for search
-        self.info.keywords = "auto-annotation, labelling, groundingdino, sam, coco, voc, segmentation"
+        self.info.keywords = "auto-annotation, labelling, groundingdino, SAM, coco, voc, segmentation"
 
     def create(self, param=None):
         # Create process object
