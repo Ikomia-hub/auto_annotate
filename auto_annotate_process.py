@@ -45,7 +45,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.dataset_split_ratio = 0.8
         self.model_name_grounding_dino = "Swin-B"
         self.model_name_sam = "vit_l"
-        self.conf_thres = 0.50
+        self.conf_thres = 0.35
         self.conf_thres_text = 0.25
         self.cuda = torch.cuda.is_available()
         self.update = False
