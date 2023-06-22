@@ -119,7 +119,7 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         # Input image folder
         self.browse_in_folder = pyqtutils.append_browse_file(
             self.grid_layout, label="Image folder",
-            path=self.parameters.input_image_folder,
+            path=self.parameters.dataset_folder,
             tooltip="Select folder",
             mode=QFileDialog.Directory
         )
@@ -158,7 +158,7 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.parameters.min_image_area_percent = self.spin_min_image_area_percent.value()
         self.parameters.max_image_area_percent = self.spin_max_image_area_percent.value()
         self.parameters.approximation_percent = self.spin_approximation_percent.value()
-        self.parameters.input_image_folder = self.browse_in_folder.path
+        self.parameters.dataset_folder = self.browse_in_folder.path
         self.parameters.output_folder = self.browse_out_folder.path
 
         

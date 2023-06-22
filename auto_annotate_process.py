@@ -52,7 +52,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.min_image_area_percent = 0.002
         self.max_image_area_percent = 0.80
         self.approximation_percent = 0.2
-        self.input_image_folder = ""
+        self.dataset_folder = ""
         self.output_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "annotations")
 
     def set_values(self, params):
@@ -68,7 +68,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.min_image_area_percent = float(params["min_image_area_percent"])
         self.max_image_area_percent = float(params["max_image_area_percent"])
         self.approximation_percent = float(params["approximation_percent"])
-        self.input_image_folder = params["input_image_folder"]
+        self.dataset_folder = params["dataset_folder"]
         self.output_folder = params["output_folder"]
 
     def get_values(self):
@@ -84,7 +84,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         params["min_image_area_percent"] = str(self.min_image_area_percent)
         params["max_image_area_percent"] = str(self.max_image_area_percent)
         params["approximation_percent"] = str(self.approximation_percent)
-        params["input_image_folder"] = str(self.input_image_folder)
+        params["dataset_folder"] = str(self.dataset_folder)
         params["output_folder"] = str(self.output_folder)
         return params
 
@@ -150,7 +150,7 @@ class AutoAnnotate(core.CWorkflowTask):
 
         # Get image list:
         image_paths = sv.list_files_with_extensions(
-            directory=param.input_image_folder,
+            directory=param.dataset_folder,
             extensions=self.img_extension
         )
 

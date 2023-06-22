@@ -16,7 +16,7 @@ Auto-annotate images using a text prompt. GroundingDINO is employed for object d
 - **min_image_area_percent**: The minimum percentage of detection area relative to the image area for a detection to be included.
 - **max_image_area_percent**: The maximum percentage of detection area relative to the image area for a detection to be included.
 - **approximation_percentage**: The percentage of polygon points to be removed from the input polygon, in the range [0, 1).
-- **input_image_folder**: Path of your image folder.
+- **dataset_folder**: Path of your image folder.
 - **output_folder**: Path of the output annotation file.
 
 
@@ -33,7 +33,7 @@ wf = Workflow()
 
 # Add the auto_annotate process to the workflow and set parameters
 annotate = wf.add_task(ik.auto_annotate(
-    input_image_folder = "C:/Path/To/Your/Image/Folder",
+    dataset_folder = "C:/Path/To/Your/Image/Folder",
     classes = 'car, person, dog, chair',
     task = 'object detection',
     dataset_split_ratio = "0.8",
