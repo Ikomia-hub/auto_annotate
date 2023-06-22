@@ -6,18 +6,18 @@ Auto-annotate images using a text prompt. GroundingDINO is employed for object d
 ## :rocket: Ikomia API
 
 ### :wrench: Parameters
-- **classes**: String or path to text file
-- **task**: 'object detection' or 'segmentation'
-- **model_name_grounding_dino**: 'Swin-T- or 'Swin-B'
-- **model_name_sam**: 'vit_b', 'vit_l' or 'vit_h'
-- **conf_thres**: Box confidence threshold of the GroundingDINO model
-- **conf_thres_text**: Text confidence threshold of the GroundingDINO model
-- **cuda**: (Bool) Workflow run of the specified device. (CPU if cuda = False)
-- **min_image_area_percent**: The minimum percentage of detection area relative to the image area for a detection to be included
-- **max_image_area_percent**: The maximum percentage of detection area relative to the image area for a detection to be included
+- **classes**: list of classes(string) or path to file.txt (see template utils/classes_list_template.txt).
+- **task**: 'object detection' or 'segmentation'.
+- **dataset_split_ratio**: Image split between train and test coco annotations.
+- **model_name_grounding_dino**: 'Swin-T- or 'Swin-B'.
+- **model_name_sam**: 'vit_b', 'vit_l' or 'vit_h'.
+- **conf_thres**: Box confidence threshold of the GroundingDINO model.
+- **conf_thres_text**: Text confidence threshold of the GroundingDINO model.
+- **min_image_area_percent**: The minimum percentage of detection area relative to the image area for a detection to be included.
+- **max_image_area_percent**: The maximum percentage of detection area relative to the image area for a detection to be included.
 - **approximation_percentage**: The percentage of polygon points to be removed from the input polygon, in the range [0, 1).
-- **input_image_folder**: Path of your image folder
-- **output_folder**: Path of the output annotation file
+- **input_image_folder**: Path of your image folder.
+- **output_folder**: Path of the output annotation file.
 
 
 ### :milky_way: Code snippet
@@ -33,21 +33,20 @@ wf = Workflow()
 
 # Add the auto_annotate process to the workflow and set parameters
 annotate = wf.add_task(ik.auto_annotate(
-        input_image_folder = "C:/Path/To/Your/Image/Folder"),
-        classes = 'car, person, dog, chair'
-        task = 'segmentation',
-        model_name_grounding_dino = "Swin-T",
-        model_name_sam = "vit_l",
-        conf_thres = 0.50,
-        conf_thres_text = 0.25,
-        cuda = True,
-        min_image_area_percent = 0.002,
-        max_image_area_percent = 0.80,
-        approximation_percent = 0.2,
-        input_image_folder = "",
-        output_folder = os.path.join(os.getcwd(), "annotations")
-        )
-
+    input_image_folder = "C:/Path/To/Your/Image/Folder",
+    classes = 'car, person, dog, chair',
+    task = 'object detection',
+    dataset_split_ratio = "0.8",
+    model_name_grounding_dino = "Swin-T",
+    model_name_sam = "vit_l",
+    conf_thres = "0.50",
+    conf_thres_text = "0.25",
+    min_image_area_percent = "0.002",
+    max_image_area_percent = "0.80",
+    approximation_percent = "0.2",
+    output_folder = os.path.join(os.getcwd(), "annotations")
+    )
+)
 # Run auto_annotate
 wf.run()
 ```
