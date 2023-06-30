@@ -1,6 +1,6 @@
 # auto_annotate
 
-Auto-annotate images using a text prompt. GroundingDINO is employed for object detection (bounding boxes), followed by SAM for segmentation. The annotations are then saved in both Pascal VOC format and COCO format. The COCO annotation file (.json) is compatible with the Ikomia 'dataset_coco' dataloader.
+Auto-annotate images using a text prompt. GroundingDINO is employed for object detection (bounding boxes), followed by MobileSAM or SAM for segmentation. The annotations are then saved in both Pascal VOC format and COCO format. The COCO annotation file (.json) is compatible with the Ikomia 'dataset_coco' dataloader.
 
 
 ## :rocket: Ikomia API
@@ -10,7 +10,7 @@ Auto-annotate images using a text prompt. GroundingDINO is employed for object d
 - **task**: 'object detection' or 'segmentation'.
 - **dataset_split_ratio**: Image split between train and test coco annotations.
 - **model_name_grounding_dino**: 'Swin-T- or 'Swin-B'.
-- **model_name_sam**: 'vit_b', 'vit_l' or 'vit_h'.
+- **model_name_sam**: 'mobile_sam', 'vit_b', 'vit_l' or 'vit_h'.
 - **conf_thres**: Box confidence threshold of the GroundingDINO model.
 - **conf_thres_text**: Text confidence threshold of the GroundingDINO model.
 - **min_image_area_percent**: The minimum percentage of detection area relative to the image area for a detection to be included.
@@ -68,7 +68,7 @@ wf.run()
 ```
 
 
-- Segment Anything
+- Segment Anything (SAM)
     - [Documentation](https://segment-anything.com/)
     - [Code source](https://github.com/facebookresearch/segment-anything)   
 ```bibtex
@@ -79,3 +79,21 @@ wf.run()
   year={2023}
 }
 ```
+
+- Mobile SAM
+    - [Documentation](https://segment-anything.com/)
+    - [Code source](https://github.com/ChaoningZhang/MobileSAM) 
+
+```bibtex
+@article{mobile_sam,
+  title={Faster Segment Anything: Towards Lightweight SAM for Mobile Applications},
+  author={Zhang, Chaoning and Han, Dongshen and Qiao, Yu and Kim, Jung Uk and Bae, Sung Ho and Lee, Seungkyu and Hong, Choong Seon},
+  journal={arXiv preprint arXiv:2306.14289},
+  year={2023}
+}
+```
+
+
+
+
+

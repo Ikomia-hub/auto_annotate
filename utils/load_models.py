@@ -1,8 +1,11 @@
 import os
 import urllib
 import requests
+from auto_annotate.MobileSAM.mobile_encoder.setup_mobile_sam import setup_model
+
 from groundingdino.util.inference import Model
 from segment_anything import sam_model_registry, SamPredictor
+import torch
 
 def load_grounding_dino(name, device):
     url_base = "https://github.com/IDEA-Research/GroundingDINO/releases/download/"
@@ -54,28 +57,44 @@ def load_grounding_dino(name, device):
     return model_dino
 
 def load_sam_predictor(name, device):
-    base_url= "https://dl.fbaipublicfiles.com/segment_anything/"
-    model_list = {"vit_b": "sam_vit_b_01ec64.pth",
-                    "vit_l": "sam_vit_l_0b3195.pth",
-                    "vit_h": "sam_vit_h_4b8939.pth"}
-    
-    parent_directory = os.path.join(os.path.dirname(os.path.dirname(
-                            os.path.realpath(__file__))))
-    model_folder = os.path.join(parent_directory, "weights")
+    if name == "mobile_sam":
+        checkpoint_path = os.path.join(
+                                os.path.dirname(
+                                os.path.dirname(__file__)),
+                                'MobileSAM',
+                                'weights',
+                                'mobile_sam.pt'
+        )
+        checkpoint = torch.load(checkpoint_path)
+        mobile_sam = setup_model()
+        mobile_sam.load_state_dict(checkpoint,strict=True)
+        mobile_sam.to(device=device)
+        mobile_sam.eval()
+        sam_pred = SamPredictor(mobile_sam)
 
-    model_weight =  os.path.join(str(model_folder), model_list[name])
+    else:
+        base_url= "https://dl.fbaipublicfiles.com/segment_anything/"
+        model_list = {"vit_b": "sam_vit_b_01ec64.pth",
+                        "vit_l": "sam_vit_l_0b3195.pth",
+                        "vit_h": "sam_vit_h_4b8939.pth"}
 
-    if not os.path.isdir(model_folder):
-        os.mkdir(model_folder)
+        parent_directory = os.path.join(os.path.dirname(os.path.dirname(
+                                os.path.realpath(__file__))))
+        model_folder = os.path.join(parent_directory, "weights")
 
-    if not os.path.isfile(model_weight):
-        print("Downloading the SAM model...")
-        model_url = base_url + model_list[name]
-        response = requests.get(model_url)
-        with open(os.path.join(model_folder, model_list[name]) , 'wb') as f:
-            f.write(response.content)
+        model_weight =  os.path.join(str(model_folder), model_list[name])
 
-    sam = sam_model_registry[name](checkpoint=model_weight)
-    sam_pred = SamPredictor(sam)
-    
+        if not os.path.isdir(model_folder):
+            os.mkdir(model_folder)
+
+        if not os.path.isfile(model_weight):
+            print("Downloading the SAM model...")
+            model_url = base_url + model_list[name]
+            response = requests.get(model_url)
+            with open(os.path.join(model_folder, model_list[name]) , 'wb') as f:
+                f.write(response.content)
+
+        sam = sam_model_registry[name](checkpoint=model_weight)
+        sam_pred = SamPredictor(sam)
+
     return sam_pred 

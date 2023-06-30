@@ -43,7 +43,11 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.grid_layout = QGridLayout()
 
         # Cuda
-        self.check_cuda = pyqtutils.append_check(self.grid_layout, "Cuda", self.parameters.cuda and is_available())
+        self.check_cuda = pyqtutils.append_check(
+                                    self.grid_layout,
+                                    "Cuda",
+                                    self.parameters.cuda and is_available()
+        )
         self.check_cuda.setEnabled(is_available())
 
         # Task name
@@ -52,8 +56,6 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.combo_task.setCurrentText(self.parameters.task)
 
         # Prompt
-        # self.edit_prompt = pyqtutils.append_edit(self.grid_layout, "Classes", self.parameters.classes)
-
         self.edit_prompt = pyqtutils.append_browse_file(
             self.grid_layout, label="Classes list or file (.txt)",
             path=self.parameters.classes,
@@ -80,21 +82,27 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.grid_layout.addWidget(self.qlabel_dino_param, row_dino, 0)
 
         # Confidence thresholds
-        self.spin_conf_thres_box = pyqtutils.append_double_spin(self.grid_layout, "Confidence threshold boxes",
-                                                          self.parameters.conf_thres,
-                                                          min=0., max=1., step=0.01, decimals=2)
+        self.spin_conf_thres_box = pyqtutils.append_double_spin(
+                                                self.grid_layout,
+                                                "Confidence threshold boxes",
+                                                self.parameters.conf_thres,
+                                                min=0., max=1., step=0.01, decimals=2
+        )
 
-        self.spin_conf_thres_text = pyqtutils.append_double_spin(self.grid_layout, "Confidence threshold text",
+        self.spin_conf_thres_text = pyqtutils.append_double_spin(
+                                                    self.grid_layout,
+                                                    "Confidence threshold text",
                                                     self.parameters.conf_thres_text,
-                                                    min=0., max=1., step=0.01, decimals=2)
+                                                    min=0., max=1., step=0.01, decimals=2
+        )
 
         # Model name SAM
         self.combo_model_name_sam = pyqtutils.append_combo(self.grid_layout, "Model name SAM")
+        self.combo_model_name_sam.addItem("mobile_sam")
         self.combo_model_name_sam.addItem("vit_b")
         self.combo_model_name_sam.addItem("vit_l")
         self.combo_model_name_sam.addItem("vit_h")
         self.combo_model_name_sam.setCurrentText(self.parameters.model_name_sam)
-        
 
         row_annot = self.grid_layout.rowCount()
         self.qlabel_annot_param = QLabel('Annotation parameters:')
@@ -110,7 +118,7 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
                                                     "max_image_area_percentage",
                                                     self.parameters.max_image_area_percent,
                                                     min=0., max=1., step=0.01, decimals=2)
-    
+
         self.spin_approximation_percent = pyqtutils.append_double_spin(self.grid_layout,
                                                 "approximation_percentage",
                                                 self.parameters.approximation_percent,
@@ -140,7 +148,6 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.set_layout(layout_ptr)
 
 
-
     def on_apply(self):
         # Apply button clicked slot
 
@@ -160,8 +167,6 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.parameters.approximation_percent = self.spin_approximation_percent.value()
         self.parameters.dataset_folder = self.browse_in_folder.path
         self.parameters.output_folder = self.browse_out_folder.path
-
-        
         self.parameters.update = True
 
         # Send signal to launch the process

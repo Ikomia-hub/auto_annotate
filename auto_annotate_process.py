@@ -25,7 +25,6 @@ from auto_annotate.utils.auto_annot_utils import make_folders_and_files, enhance
 from ikomia.dnn.dataset import read_class_names
 import os
 import torch
-from typing import List
 import numpy as np
 import cv2
 import supervision as sv
@@ -51,9 +50,13 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.update = False
         self.min_image_area_percent = 0.002
         self.max_image_area_percent = 0.80
-        self.approximation_percent = 0.2
+        self.approximation_percent = 0.75
         self.dataset_folder = ""
-        self.output_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "annotations")
+        self.output_folder = os.path.join(
+            os.path.dirname(
+            os.path.realpath(__file__)),
+            "annotations"
+        )
 
     def set_values(self, params):
         self.classes = params["classes"]
@@ -157,7 +160,6 @@ class AutoAnnotate(core.CWorkflowTask):
         # Edit classes list from prompt or file:
         if os.path.isfile(param.classes):
             class_list = read_class_names(param.classes)
-            print(class_list)
         else:
             class_list = param.classes.split(', ')
         self.class_list_enhanced = enhance_class_name(class_list)
@@ -268,7 +270,7 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         self.info.icon_path = "icons/icon.png"
         self.info.path = "Plugins/Python/Dataset"
         self.info.version = "1.0.0"
-        self.info.authors = "Liu et al. (GroundingDINO), Kirillov et al. (SAM)"
+        self.info.authors = "Liu et al. (GroundingDINO), Kirillov et al. (SAM), Zhang et al. (MobileSAM)"
         self.info.article = ""
         self.info.journal = "ArXiv"
         self.info.year = 2023
@@ -278,7 +280,7 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         # Code source repository
         self.info.repository = ""
         # Keywords used for search
-        self.info.keywords = "auto-annotation, labelling, groundingdino, SAM, coco, voc, segmentation"
+        self.info.keywords = "auto-annotation, labelling, groundingdino, SAM, MobileSAM, segment anything"
 
     def create(self, param=None):
         # Create process object
