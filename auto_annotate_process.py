@@ -261,11 +261,6 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         # Set process information as string here
         self.info.name = "auto_annotate"
         self.info.short_description = "Auto-annotate images with GroundingDINO and SAM models"
-        self.info.description = "Auto-annotate images using text prompt." \
-                                "GroundingDINO is used for object detection (bbox) " \
-                                "followed by SAM for segmentation. Annotations are saved in " \
-                                "Pascal VOC format and COCO format. The COCO annotation (.json) is " \
-                                "compatible with the Ikomia 'dataset_coco' dataloader."
         # relative path -> as displayed in Ikomia application process tree
         self.info.icon_path = "icons/icon.png"
         self.info.path = "Plugins/Python/Dataset"
@@ -281,6 +276,8 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         self.info.repository = ""
         # Keywords used for search
         self.info.keywords = "auto-annotation, labelling, groundingdino, SAM, MobileSAM, segment anything"
+        self.info.algo_type = core.AlgoType.DATASET
+        self.info.algo_tasks = "OBJECT_DETECTION,INSTANCE_SEGMENTATION,PANOPTIC_SEGMENTATION,IMAGE_CAPTIONING"
 
     def create(self, param=None):
         # Create process object
