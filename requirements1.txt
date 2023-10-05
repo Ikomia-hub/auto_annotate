@@ -6,7 +6,7 @@ torchvision==0.10.0+cu111; python_version < "3.10"
 
 timm >=0.9.2, <1.0
 git+https://github.com/ChaoningZhang/MobileSAM.git
-transformers
+transformers>=4.25, <=4.30.2
 addict
 yapf
 supervision==0.6.0 # Fix version to be compatible with groundingdino-py 0.4.0
