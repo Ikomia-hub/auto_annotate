@@ -58,6 +58,7 @@ pip install ikomia
 
 **Parameters** should be in **strings format**  when added to the dictionary.
 
+*The code snippet below requires 6Gb of GPU memory*
 
 ```Python
 from ikomia.dataprocess.workflow import Workflow
@@ -71,18 +72,18 @@ wf = Workflow()
 
 # Add the auto_annotate process to the workflow and set parameters
 annotate = wf.add_task(ik.auto_annotate(
-    dataset_folder = "C:/Path/To/Your/Image/Folder",
+    dataset_folder = "Path/To/Your/Image/Folder",
     classes = 'car, person, dog, chair',
-    task = 'object detection',
+    task = 'segmentation',
     dataset_split_ratio = "0.8",
-    model_name_grounding_dino = "Swin-B",
-    model_name_sam = "vit_l",
+    model_name_grounding_dino = "Swin-T",
+    model_name_sam = "mobile_sam",
     conf_thres = "0.35",
     conf_thres_text = "0.25",
     min_image_area_percent = "0.002",
     max_image_area_percent = "0.80",
     approximation_percent = "0.2",
-    output_folder = os.path.join(os.getcwd(), "annotations")
+    output_folder = "Path/To/Annotations/Output/Folder"
     )
 )
 # Run auto_annotate
