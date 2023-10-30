@@ -127,7 +127,7 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         # Input image folder
         self.browse_in_folder = pyqtutils.append_browse_file(
             self.grid_layout, label="Image folder",
-            path=self.parameters.dataset_folder,
+            path=self.parameters.image_folder,
             tooltip="Select folder",
             mode=QFileDialog.Directory
         )
@@ -140,6 +140,12 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
             tooltip="Select folder",
             mode=QFileDialog.Directory
         )
+
+        # Dataset name 
+        self.qlabel_output_dataset_name = QLabel('Output dataset name:')
+        self.grid_layout.addWidget(self.qlabel_output_dataset_name, self.grid_layout.rowCount(), 0)
+        self.edit_output_dataset_name = QLineEdit()
+        self.grid_layout.addWidget(self.edit_output_dataset_name, self.grid_layout.rowCount()-1, 1)
 
         # PyQt -> Qt wrapping
         layout_ptr = qtconversion.PyQtToQt(self.grid_layout)
@@ -159,14 +165,15 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.parameters.model_name_grounding_dino = self.combo_model_dino.currentText()
         self.parameters.model_name_sam = self.combo_model_name_sam.currentText()
         self.parameters.classes = self.edit_prompt.path
-        # self.parameters.classes = self.edit_prompt.text()
         self.parameters.conf_thres = self.spin_conf_thres_box.value()
         self.parameters.conf_thres_text = self.spin_conf_thres_text.value()
         self.parameters.min_relative_object_size = self.spin_min_relative_object_size.value()
         self.parameters.max_relative_object_size = self.spin_max_relative_object_size.value()
         self.parameters.approximation_percent = self.spin_approximation_percent.value()
-        self.parameters.dataset_folder = self.browse_in_folder.path
+        self.parameters.image_folder = self.browse_in_folder.path
         self.parameters.output_folder = self.browse_out_folder.path
+        self.parameters.output_dataset_name = self.edit_output_dataset_name.text()
+
         self.parameters.update = True
 
         # Send signal to launch the process

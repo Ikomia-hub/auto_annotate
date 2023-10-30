@@ -53,7 +53,7 @@ pip install ikomia
 - **min_relative_object_size** (float) - default '0.002': The minimum percentage of detection area relative to the image area for a detection to be included.
 - **max_relative_object_size** (float) - default '0.8': The maximum percentage of detection area relative to the image area for a detection to be included.
 - **polygon_simplification_factor** (float) - default '0.8': The percentage of polygon points to be removed from the input polygon, in the range [0, 1[.
-- **dataset_folder** (str): Path of your image folder.
+- **image_folder** (str): Path of your image folder.
 - **output_folder** (str): Path of the output annotation file.
 
 **Parameters** should be in **strings format**  when added to the dictionary.
@@ -71,7 +71,7 @@ wf = Workflow()
 annotate = wf.add_task(name = "auto_annotate")
 
 annotate.set_parameters({
-    "dataset_folder" = "Path/To/Your/Image/Folder",
+    "image_folder" = "Path/To/Your/Image/Folder",
     "classes" = "car, person, dog, chair",
     "task" = "segmentation",
     "dataset_split_ratio" = "0.8",

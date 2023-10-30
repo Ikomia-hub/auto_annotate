@@ -29,6 +29,7 @@ import numpy as np
 import cv2
 import supervision as sv
 from tqdm import tqdm
+from datetime import datetime
 
 
 # --------------------
@@ -51,7 +52,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.min_relative_object_size = 0.002
         self.max_relative_object_size = 0.80
         self.approximation_percent = 0.75
-        self.dataset_folder = ""
+        self.image_folder = ""
+        self.output_dataset_name = ""
         self.output_folder = os.path.join(
             os.path.dirname(
             os.path.realpath(__file__)),
@@ -71,7 +73,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.min_relative_object_size = float(params["min_relative_object_size"])
         self.max_relative_object_size = float(params["max_relative_object_size"])
         self.approximation_percent = float(params["approximation_percent"])
-        self.dataset_folder = params["dataset_folder"]
+        self.image_folder = params["image_folder"]
+        self.output_dataset_name = params["output_dataset_name"]
         self.output_folder = params["output_folder"]
 
     def get_values(self):
@@ -87,7 +90,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         params["min_relative_object_size"] = str(self.min_relative_object_size)
         params["max_relative_object_size"] = str(self.max_relative_object_size)
         params["approximation_percent"] = str(self.approximation_percent)
-        params["dataset_folder"] = str(self.dataset_folder)
+        params["image_folder"] = str(self.image_folder)
+        params["output_dataset_name"] = str(self.output_dataset_name)
         params["output_folder"] = str(self.output_folder)
         return params
 
@@ -114,6 +118,7 @@ class AutoAnnotate(core.CWorkflowTask):
                               "ras", "exr", "hdr", "pic"
         ]
         self.class_list_enhanced = None
+        self.dataset_folder_name = None
 
     def get_progress_steps(self):
         # Function returning the number of progress steps for this process
@@ -150,10 +155,11 @@ class AutoAnnotate(core.CWorkflowTask):
                 self.sam_predictor = load_sam_predictor(param.model_name_sam, self.device)
 
             param.update = False
-
-        # Get image list:
+        
+        # Get list of images
         image_paths = sv.list_files_with_extensions(
-            directory=param.dataset_folder,
+            directory=param.image_folder
+            ,
             extensions=self.img_extension
         )
 
@@ -195,11 +201,16 @@ class AutoAnnotate(core.CWorkflowTask):
             annotations[image_name] = detections
 
         # Create output folder & file
+        if param.output_dataset_name:
+            self.dataset_folder_name = param.output_dataset_name
+        else:
+            self.dataset_folder_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        save_dir = os.path.join(param.output_folder, self.dataset_folder_name)
         annot_dir_voc, json_coco_train_bbox, json_coco_test_bbox, \
             json_coco_train_seg, json_coco_test_seg = make_folders_and_files(
-            param.output_folder,
-            param.task,
-            param.dataset_split_ratio
+                                                                    save_dir,
+                                                                    param.task,
+                                                                    param.dataset_split_ratio
         )
 
         # Export annotations as Pascal VOC
