@@ -78,7 +78,7 @@ annotate.set_parameters({
     "task": "segmentation",
     "dataset_split_ratio": "0.8",
     "model_name_grounding_dino": "Swin-T",
-    "model_name_sam" = "mobile_sam",
+    "model_name_sam": "mobile_sam",
     "conf_thres": "0.35",
     "conf_thres_text": "0.25",
     "min_relative_object_size": "0.80",
