@@ -22,6 +22,7 @@ from auto_annotate.auto_annotate_process import AutoAnnotateParam
 
 # PyQt GUI framework
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
 from torch.cuda import is_available
 
 
@@ -71,41 +72,49 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
             step=0.05, decimals=2
         )
 
+        self.checkbox_edit_model = QCheckBox("Edit model settings:")
+        self.grid_layout.addWidget(self.checkbox_edit_model, self.grid_layout.rowCount(), 0)
+        self.checkbox_edit_model.stateChanged.connect(self.toggleModelSettingsVisibility)
+
+        # GroupBox for model's settings
+        self.model_settings_group = QWidget()
+        self.model_settings_layout = QGridLayout(self.model_settings_group)
+        self.grid_layout.addWidget(self.model_settings_group, self.grid_layout.rowCount(), 0, 1, 2)
+
         # Model name GroundingDino
-        self.combo_model_dino = pyqtutils.append_combo(self.grid_layout, "Model name GroundingDino")
+        self.combo_model_dino = pyqtutils.append_combo(self.model_settings_layout, "Model name GroundingDino")
         self.combo_model_dino.addItem("Swin-T")
         self.combo_model_dino.addItem("Swin-B")
         self.combo_model_dino.setCurrentText(self.parameters.model_name_grounding_dino)
 
-        row_dino = self.grid_layout.rowCount()
-        self.qlabel_dino_param = QLabel('Grounding Dino parameters:')
-        self.grid_layout.addWidget(self.qlabel_dino_param, row_dino, 0)
-
         # Confidence thresholds
         self.spin_conf_thres_box = pyqtutils.append_double_spin(
-                                                self.grid_layout,
+                                                self.model_settings_layout,
                                                 "Confidence threshold boxes",
                                                 self.parameters.conf_thres,
                                                 min=0., max=1., step=0.01, decimals=2
         )
 
         self.spin_conf_thres_text = pyqtutils.append_double_spin(
-                                                    self.grid_layout,
+                                                    self.model_settings_layout,
                                                     "Confidence threshold text",
                                                     self.parameters.conf_thres_text,
                                                     min=0., max=1., step=0.01, decimals=2
         )
 
         # Model name SAM
-        self.combo_model_name_sam = pyqtutils.append_combo(self.grid_layout, "Model name SAM")
+        self.combo_model_name_sam = pyqtutils.append_combo(self.model_settings_layout, "Model name SAM")
         self.combo_model_name_sam.addItem("mobile_sam")
         self.combo_model_name_sam.addItem("vit_b")
         self.combo_model_name_sam.addItem("vit_l")
         self.combo_model_name_sam.addItem("vit_h")
         self.combo_model_name_sam.setCurrentText(self.parameters.model_name_sam)
 
+        self.model_settings_group.setVisible(self.checkbox_edit_model.isChecked())
+
+        # Edit annotation's parameters
         row_annot = self.grid_layout.rowCount()
-        self.qlabel_annot_param = QLabel('Annotation parameters:')
+        self.qlabel_annot_param = QLabel("Edit annotation's parameters:")
         self.grid_layout.addWidget(self.qlabel_annot_param, row_annot, 0)
 
         self.spin_min_relative_object_size = pyqtutils.append_double_spin(
@@ -131,7 +140,6 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
             tooltip="Select folder",
             mode=QFileDialog.Directory
         )
-
 
         # Output folder
         self.browse_out_folder = pyqtutils.append_browse_file(
@@ -165,6 +173,11 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         # Set widget layout
         self.set_layout(layout_ptr)
 
+    def toggleModelSettingsVisibility(self, state):
+        if state == Qt.Checked:
+            self.model_settings_group.show()
+        else:
+            self.model_settings_group.hide()
 
     def on_apply(self):
         # Apply button clicked slot

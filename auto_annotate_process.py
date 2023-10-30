@@ -63,6 +63,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
             os.path.realpath(__file__)),
             "annotations"
         )
+        self.edit_model_setting = False
 
     def set_values(self, params):
         self.classes = params["classes"]
@@ -82,6 +83,7 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.output_folder = params["output_folder"]
         self.export_pascal_voc = utils.strtobool(params["export_pascal_voc"])
         self.export_coco = utils.strtobool(params["export_coco"])
+        self.edit_model_setting = utils.strtobool(params["edit_model_setting"])
 
     def get_values(self):
         params = {}
