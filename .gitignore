@@ -1,0 +1,7 @@
+/.idea/
+/weights/
+/__pycache__/
+/annotations/
+/data/
+utils/__pycache__
+
