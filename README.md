@@ -47,12 +47,12 @@ pip install ikomia
 - **task** (str) - default 'object detection': 'object detection' or 'segmentation'.
 - **dataset_split_ratio** (float) - default '0.8': Image split between train and test coco annotations.
 - **model_name_grounding_dino** (str) - default 'Swin-B': 'Swin-T' or 'Swin-B'.
-- **model_name_sam** (str) - default 'vit_l': 'mobile_sam', 'vit_b', 'vit_l' or 'vit_h'.
+- **model_name_sam** (str) - default 'mobile_sam': 'mobile_sam', 'vit_b', 'vit_l' or 'vit_h'.
 - **conf_thres** (float) - default '0.35': Box confidence threshold of the GroundingDINO model.
 - **conf_thres_text** (float) - default '0.25': Text confidence threshold of the GroundingDINO model.
-- **min_image_area_percent** (float) - default '0.002': The minimum percentage of detection area relative to the image area for a detection to be included.
-- **max_image_area_percent** (float) - default '0.8': The maximum percentage of detection area relative to the image area for a detection to be included.
-- **approximation_percentage** (float) - default '0.8': The percentage of polygon points to be removed from the input polygon, in the range [0, 1).
+- **min_relative_object_size** (float) - default '0.002': The minimum percentage of detection area relative to the image area for a detection to be included.
+- **max_relative_object_size** (float) - default '0.8': The maximum percentage of detection area relative to the image area for a detection to be included.
+- **polygon_simplification_factor** (float) - default '0.8': The percentage of polygon points to be removed from the input polygon, in the range [0, 1[.
 - **dataset_folder** (str): Path of your image folder.
 - **output_folder** (str): Path of the output annotation file.
 
@@ -79,7 +79,7 @@ annotate.set_parameters({
     "model_name_sam" = "mobile_sam",
     "conf_thres" = "0.35",
     "conf_thres_text" = "0.25",
-    "min_image_area_percent" = "0.80",
+    "min_relative_object_size" = "0.80",
     "output_folder" = "Path/To/Annotations/Output/Folder",
 })
 

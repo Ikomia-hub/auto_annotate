@@ -43,13 +43,13 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.task = 'object detection'
         self.dataset_split_ratio = 0.8
         self.model_name_grounding_dino = "Swin-B"
-        self.model_name_sam = "vit_l"
+        self.model_name_sam = "mobile_sam"
         self.conf_thres = 0.35
         self.conf_thres_text = 0.25
         self.cuda = torch.cuda.is_available()
         self.update = False
-        self.min_image_area_percent = 0.002
-        self.max_image_area_percent = 0.80
+        self.min_relative_object_size = 0.002
+        self.max_relative_object_size = 0.80
         self.approximation_percent = 0.75
         self.dataset_folder = ""
         self.output_folder = os.path.join(
@@ -68,8 +68,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.conf_thres_text = float(params["conf_thres_text"])
         self.cuda = utils.strtobool(params["cuda"])
         self.update = True
-        self.min_image_area_percent = float(params["min_image_area_percent"])
-        self.max_image_area_percent = float(params["max_image_area_percent"])
+        self.min_relative_object_size = float(params["min_relative_object_size"])
+        self.max_relative_object_size = float(params["max_relative_object_size"])
         self.approximation_percent = float(params["approximation_percent"])
         self.dataset_folder = params["dataset_folder"]
         self.output_folder = params["output_folder"]
@@ -84,8 +84,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         params["conf_thres"] = str(self.conf_thres)
         params["conf_thres_text"] = str(self.conf_thres_text)
         params["cuda"] = str(self.cuda)
-        params["min_image_area_percent"] = str(self.min_image_area_percent)
-        params["max_image_area_percent"] = str(self.max_image_area_percent)
+        params["min_relative_object_size"] = str(self.min_relative_object_size)
+        params["max_relative_object_size"] = str(self.max_relative_object_size)
         params["approximation_percent"] = str(self.approximation_percent)
         params["dataset_folder"] = str(self.dataset_folder)
         params["output_folder"] = str(self.output_folder)
@@ -209,8 +209,8 @@ class AutoAnnotate(core.CWorkflowTask):
             annotations=annotations
         ).as_pascal_voc(
             annotations_directory_path=annot_dir_voc,
-            min_image_area_percentage=param.min_image_area_percent,
-            max_image_area_percentage=param.max_image_area_percent,
+            min_image_area_percentage=param.min_relative_object_size,
+            max_image_area_percentage=param.max_relative_object_size,
             approximation_percentage=param.approximation_percent
         )
 

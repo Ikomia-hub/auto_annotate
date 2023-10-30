@@ -108,19 +108,19 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.qlabel_annot_param = QLabel('Annotation parameters:')
         self.grid_layout.addWidget(self.qlabel_annot_param, row_annot, 0)
 
-        self.spin_min_image_area_percent = pyqtutils.append_double_spin(
+        self.spin_min_relative_object_size = pyqtutils.append_double_spin(
                                                     self.grid_layout,
-                                                    "min_image_area_percentage",
-                                                    self.parameters.min_image_area_percent,
+                                                    "min_relative_object_size",
+                                                    self.parameters.min_relative_object_size,
                                                     min=0., max=1., step=0.01, decimals=3)
 
-        self.spin_max_image_area_percent = pyqtutils.append_double_spin(self.grid_layout,
-                                                    "max_image_area_percentage",
-                                                    self.parameters.max_image_area_percent,
+        self.spin_max_relative_object_size = pyqtutils.append_double_spin(self.grid_layout,
+                                                    "max_relative_object_size",
+                                                    self.parameters.max_relative_object_size,
                                                     min=0., max=1., step=0.01, decimals=2)
 
         self.spin_approximation_percent = pyqtutils.append_double_spin(self.grid_layout,
-                                                "approximation_percentage",
+                                                "polygon_simplification_factor",
                                                 self.parameters.approximation_percent,
                                                 min=0., max=0.99, step=0.01, decimals=2)
 
@@ -162,8 +162,8 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         # self.parameters.classes = self.edit_prompt.text()
         self.parameters.conf_thres = self.spin_conf_thres_box.value()
         self.parameters.conf_thres_text = self.spin_conf_thres_text.value()
-        self.parameters.min_image_area_percent = self.spin_min_image_area_percent.value()
-        self.parameters.max_image_area_percent = self.spin_max_image_area_percent.value()
+        self.parameters.min_relative_object_size = self.spin_min_relative_object_size.value()
+        self.parameters.max_relative_object_size = self.spin_max_relative_object_size.value()
         self.parameters.approximation_percent = self.spin_approximation_percent.value()
         self.parameters.dataset_folder = self.browse_in_folder.path
         self.parameters.output_folder = self.browse_out_folder.path
