@@ -30,6 +30,8 @@ import cv2
 import supervision as sv
 from tqdm import tqdm
 from datetime import datetime
+import shutil
+
 
 
 # --------------------
@@ -54,6 +56,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.approximation_percent = 0.75
         self.image_folder = ""
         self.output_dataset_name = ""
+        self.export_coco = True
+        self.export_pascal_voc = False
         self.output_folder = os.path.join(
             os.path.dirname(
             os.path.realpath(__file__)),
@@ -76,6 +80,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.image_folder = params["image_folder"]
         self.output_dataset_name = params["output_dataset_name"]
         self.output_folder = params["output_folder"]
+        self.export_pascal_voc = utils.strtobool(params["export_pascal_voc"])
+        self.export_coco = utils.strtobool(params["export_coco"])
 
     def get_values(self):
         params = {}
@@ -93,6 +99,8 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         params["image_folder"] = str(self.image_folder)
         params["output_dataset_name"] = str(self.output_dataset_name)
         params["output_folder"] = str(self.output_folder)
+        params["export_pascal_voc"] = str(self.export_pascal_voc)
+        params["export_coco"] = str(self.export_coco)
         return params
 
 # --------------------
@@ -155,7 +163,7 @@ class AutoAnnotate(core.CWorkflowTask):
                 self.sam_predictor = load_sam_predictor(param.model_name_sam, self.device)
 
             param.update = False
-        
+
         # Get list of images
         image_paths = sv.list_files_with_extensions(
             directory=param.image_folder
@@ -206,11 +214,13 @@ class AutoAnnotate(core.CWorkflowTask):
         else:
             self.dataset_folder_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         save_dir = os.path.join(param.output_folder, self.dataset_folder_name)
+
         annot_dir_voc, json_coco_train_bbox, json_coco_test_bbox, \
             json_coco_train_seg, json_coco_test_seg = make_folders_and_files(
                                                                     save_dir,
                                                                     param.task,
-                                                                    param.dataset_split_ratio
+                                                                    param.dataset_split_ratio,
+                                                                    param.export_coco
         )
 
         # Export annotations as Pascal VOC
@@ -225,34 +235,45 @@ class AutoAnnotate(core.CWorkflowTask):
             approximation_percentage=param.approximation_percent
         )
 
-        # List of xml annotation files
-        xml_files_train ,xml_files_test  = get_xml_files(annot_dir_voc, param.dataset_split_ratio)
-
-        # Convert voc to coco annotations
-        convert(
-            xml_files=xml_files_train,
-            json_file=json_coco_train_bbox,
-            task="object detection"
-        )
-        if param.dataset_split_ratio < 1:
-            convert(
-                xml_files=xml_files_test,
-                json_file=json_coco_test_bbox,
-                task="object detection"
+        if param.export_coco:
+            # List of xml annotation files
+            xml_files_train ,xml_files_test  = get_xml_files(
+                                                    annot_dir_voc, 
+                                                    param.dataset_split_ratio
             )
 
-        if param.task == "segmentation":
+            # Convert voc to coco annotations
             convert(
                 xml_files=xml_files_train,
-                json_file=json_coco_train_seg,
-                task=param.task
+                json_file=json_coco_train_bbox,
+                task="object detection"
             )
             if param.dataset_split_ratio < 1:
                 convert(
                     xml_files=xml_files_test,
-                    json_file=json_coco_test_seg,
+                    json_file=json_coco_test_bbox,
+                    task="object detection"
+                )
+
+            if param.task == "segmentation":
+                convert(
+                    xml_files=xml_files_train,
+                    json_file=json_coco_train_seg,
                     task=param.task
                 )
+                if param.dataset_split_ratio < 1:
+                    convert(
+                        xml_files=xml_files_test,
+                        json_file=json_coco_test_seg,
+                        task=param.task
+                )
+
+        if not param.export_pascal_voc:
+            # Delete voc_annotations
+            voc_folder = os.path.join(save_dir, 'voc_annotations')
+            # Check if the folder exists and then delete it
+            if os.path.exists(voc_folder) and os.path.isdir(voc_folder):
+                shutil.rmtree(voc_folder)
 
         # Step progress bar (Ikomia Studio):
         self.emit_step_progress()

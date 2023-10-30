@@ -147,6 +147,18 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.edit_output_dataset_name = QLineEdit()
         self.grid_layout.addWidget(self.edit_output_dataset_name, self.grid_layout.rowCount()-1, 1)
 
+        # Export COCO
+        self.check_export_coco = pyqtutils.append_check(
+                                    self.grid_layout,
+                                    "Export in COCO format",
+                                    self.parameters.export_coco)
+
+        # Export Pascal VOC
+        self.check_export_pascal_voc = pyqtutils.append_check(
+                                    self.grid_layout,
+                                    "Export in Pascal VOC format",
+                                    self.parameters.export_pascal_voc)
+
         # PyQt -> Qt wrapping
         layout_ptr = qtconversion.PyQtToQt(self.grid_layout)
 
@@ -173,6 +185,8 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.parameters.image_folder = self.browse_in_folder.path
         self.parameters.output_folder = self.browse_out_folder.path
         self.parameters.output_dataset_name = self.edit_output_dataset_name.text()
+        self.parameters.export_coco = self.check_export_coco.isChecked()
+        self.parameters.export_pascal_voc = self.check_export_pascal_voc.isChecked()
 
         self.parameters.update = True
 

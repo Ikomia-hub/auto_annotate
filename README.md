@@ -55,6 +55,8 @@ pip install ikomia
 - **polygon_simplification_factor** (float) - default '0.8': The percentage of polygon points to be removed from the input polygon, in the range [0, 1[.
 - **image_folder** (str): Path of your image folder.
 - **output_folder** (str): Path of the output annotation file.
+- **export_coco** (bool) - default 'True': Save annotation in COCO format.
+- **export_pascal_voc** (bool) - default 'False': Save annotation in Pascal VOC format.
 
 **Parameters** should be in **strings format**  when added to the dictionary.
 
@@ -71,16 +73,16 @@ wf = Workflow()
 annotate = wf.add_task(name = "auto_annotate")
 
 annotate.set_parameters({
-    "image_folder" = "Path/To/Your/Image/Folder",
-    "classes" = "car, person, dog, chair",
-    "task" = "segmentation",
-    "dataset_split_ratio" = "0.8",
-    "model_name_grounding_dino" = "Swin-T",
+    "image_folder": "Path/To/Your/Image/Folder",
+    "classes": "car, person, dog, chair",
+    "task": "segmentation",
+    "dataset_split_ratio": "0.8",
+    "model_name_grounding_dino": "Swin-T",
     "model_name_sam" = "mobile_sam",
-    "conf_thres" = "0.35",
-    "conf_thres_text" = "0.25",
-    "min_relative_object_size" = "0.80",
-    "output_folder" = "Path/To/Annotations/Output/Folder",
+    "conf_thres": "0.35",
+    "conf_thres_text": "0.25",
+    "min_relative_object_size": "0.80",
+    "output_folder": "Path/To/Annotations/Output/Folder"
 })
 
 # Run auto_annotate
