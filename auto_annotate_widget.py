@@ -51,6 +51,14 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         )
         self.check_cuda.setEnabled(is_available())
 
+        # Input image folder
+        self.browse_in_folder = pyqtutils.append_browse_file(
+            self.grid_layout, label="Image folder",
+            path=self.parameters.image_folder,
+            tooltip="Select folder",
+            mode=QFileDialog.Directory
+        )
+
         # Task name
         self.combo_task = pyqtutils.append_combo(self.grid_layout, "Task")
         self.combo_task.addItems(["object detection", "segmentation"])
@@ -63,16 +71,8 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
             filter="*.txt",
         )
 
-        # Train test split
-        self.spin_train_test_split = pyqtutils.append_double_spin(
-            self.grid_layout,
-            "Train/test split",
-            self.parameters.dataset_split_ratio,
-            min=0.01, max=1.0,
-            step=0.05, decimals=2
-        )
-
-        self.checkbox_edit_model = QCheckBox("Edit model settings:")
+        self.checkbox_edit_model = QCheckBox("Show model settings:")
+        self.checkbox_edit_model.setStyleSheet("text-decoration: underline; font-weight: bold; color: #ed8302")
         self.grid_layout.addWidget(self.checkbox_edit_model, self.grid_layout.rowCount(), 0)
         self.checkbox_edit_model.stateChanged.connect(self.toggleModelSettingsVisibility)
 
@@ -113,33 +113,61 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.model_settings_group.setVisible(self.checkbox_edit_model.isChecked())
 
         # Edit annotation's parameters
-        row_annot = self.grid_layout.rowCount()
-        self.qlabel_annot_param = QLabel("Edit annotation's parameters:")
-        self.grid_layout.addWidget(self.qlabel_annot_param, row_annot, 0)
+        self.checkbox_edit_annotation = QCheckBox("Show annotation settings:")
+        self.checkbox_edit_annotation.setStyleSheet("font-weight: bold; text-decoration: underline; color: #ed8302")
+
+        self.grid_layout.addWidget(self.checkbox_edit_annotation, self.grid_layout.rowCount(), 0)
+        self.checkbox_edit_annotation.stateChanged.connect(self.toggleAnnotationSettingsVisibility)
+
+        # GroupBox for model's settings
+        self.annotation_settings_group = QWidget()
+        self.annotation_settings_layout = QGridLayout(self.annotation_settings_group)
+        self.grid_layout.addWidget(self.annotation_settings_group, self.grid_layout.rowCount(), 0, 1, 2)
+
+        # Train test split
+        self.spin_train_test_split = pyqtutils.append_double_spin(
+            self.annotation_settings_layout,
+            "Train/test split (COCO)",
+            self.parameters.dataset_split_ratio,
+            min=0.01, max=1.0,
+            step=0.05, decimals=2
+        )
 
         self.spin_min_relative_object_size = pyqtutils.append_double_spin(
-                                                    self.grid_layout,
+                                                    self.annotation_settings_layout,
                                                     "min_relative_object_size",
                                                     self.parameters.min_relative_object_size,
-                                                    min=0., max=1., step=0.01, decimals=3)
+                                                    min=0., max=1., step=0.01, decimals=3
+        )
 
-        self.spin_max_relative_object_size = pyqtutils.append_double_spin(self.grid_layout,
+        self.spin_max_relative_object_size = pyqtutils.append_double_spin(
+                                                    self.annotation_settings_layout,
                                                     "max_relative_object_size",
                                                     self.parameters.max_relative_object_size,
-                                                    min=0., max=1., step=0.01, decimals=2)
+                                                    min=0., max=1., step=0.01, decimals=2
+        )
 
-        self.spin_approximation_percent = pyqtutils.append_double_spin(self.grid_layout,
+        self.spin_approximation_percent = pyqtutils.append_double_spin(
+                                                self.annotation_settings_layout,
                                                 "polygon_simplification_factor",
                                                 self.parameters.approximation_percent,
-                                                min=0., max=0.99, step=0.01, decimals=2)
-
-        # Input image folder
-        self.browse_in_folder = pyqtutils.append_browse_file(
-            self.grid_layout, label="Image folder",
-            path=self.parameters.image_folder,
-            tooltip="Select folder",
-            mode=QFileDialog.Directory
+                                                min=0., max=0.99, step=0.01, decimals=2
         )
+
+        # Export COCO
+        self.check_export_coco = pyqtutils.append_check(
+                                    self.annotation_settings_layout,
+                                    "Export in COCO format",
+                                    self.parameters.export_coco)
+
+        # Export Pascal VOC
+        self.check_export_pascal_voc = pyqtutils.append_check(
+                                    self.annotation_settings_layout,
+                                    "Export in Pascal VOC format",
+                                    self.parameters.export_pascal_voc)
+
+        self.annotation_settings_group.setVisible(self.checkbox_edit_annotation.isChecked())
+
 
         # Output folder
         self.browse_out_folder = pyqtutils.append_browse_file(
@@ -155,17 +183,6 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         self.edit_output_dataset_name = QLineEdit()
         self.grid_layout.addWidget(self.edit_output_dataset_name, self.grid_layout.rowCount()-1, 1)
 
-        # Export COCO
-        self.check_export_coco = pyqtutils.append_check(
-                                    self.grid_layout,
-                                    "Export in COCO format",
-                                    self.parameters.export_coco)
-
-        # Export Pascal VOC
-        self.check_export_pascal_voc = pyqtutils.append_check(
-                                    self.grid_layout,
-                                    "Export in Pascal VOC format",
-                                    self.parameters.export_pascal_voc)
 
         # PyQt -> Qt wrapping
         layout_ptr = qtconversion.PyQtToQt(self.grid_layout)
@@ -178,6 +195,12 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
             self.model_settings_group.show()
         else:
             self.model_settings_group.hide()
+
+    def toggleAnnotationSettingsVisibility(self, state):
+        if state == Qt.Checked:
+            self.annotation_settings_group.show()
+        else:
+            self.annotation_settings_group.hide()
 
     def on_apply(self):
         # Apply button clicked slot
