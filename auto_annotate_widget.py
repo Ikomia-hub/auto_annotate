@@ -178,7 +178,7 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
         )
 
         # Dataset name 
-        self.qlabel_output_dataset_name = QLabel('Output dataset name:')
+        self.qlabel_output_dataset_name = QLabel('Output dataset name (optional)')
         self.grid_layout.addWidget(self.qlabel_output_dataset_name, self.grid_layout.rowCount(), 0)
         self.edit_output_dataset_name = QLineEdit()
         self.grid_layout.addWidget(self.edit_output_dataset_name, self.grid_layout.rowCount()-1, 1)

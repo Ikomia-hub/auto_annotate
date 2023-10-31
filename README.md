@@ -55,6 +55,7 @@ pip install ikomia
 - **polygon_simplification_factor** (float) - default '0.8': The percentage of polygon points to be removed from the input polygon, in the range [0, 1[.
 - **image_folder** (str): Path of your image folder.
 - **output_folder** (str): Path of the output annotation file.
+- **output_dataset_name** (str) - *optional*: Name of the output folder. By default it will be the timestamp. 
 - **export_coco** (bool) - default 'True': Save annotation in COCO format.
 - **export_pascal_voc** (bool) - default 'False': Save annotation in Pascal VOC format.
 
