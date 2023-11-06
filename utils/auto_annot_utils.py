@@ -13,7 +13,6 @@ def enhance_class_name(class_names: List[str]) -> List[str]:
     ]
 
 def make_folders_and_files(output_folder, task, ratio, export_coco):
-    output_folder = output_folder
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
 

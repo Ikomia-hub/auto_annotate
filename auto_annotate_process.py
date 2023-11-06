@@ -210,6 +210,8 @@ class AutoAnnotate(core.CWorkflowTask):
 
         # Create output folder & file
         self.dataset_folder_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        if not os.path.isdir(param.output_folder):
+                os.mkdir(param.output_folder)
         if param.output_dataset_name:
             dataset_dir = os.path.join(param.output_folder, param.output_dataset_name)
             save_dir = os.path.join(dataset_dir, self.dataset_folder_name)
