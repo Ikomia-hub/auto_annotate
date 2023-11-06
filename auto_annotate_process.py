@@ -209,11 +209,14 @@ class AutoAnnotate(core.CWorkflowTask):
             annotations[image_name] = detections
 
         # Create output folder & file
+        self.dataset_folder_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         if param.output_dataset_name:
-            self.dataset_folder_name = param.output_dataset_name
+            dataset_dir = os.path.join(param.output_folder, param.output_dataset_name)
+            save_dir = os.path.join(dataset_dir, self.dataset_folder_name)
+            if not os.path.isdir(dataset_dir):
+                os.mkdir(dataset_dir)
         else:
-            self.dataset_folder_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        save_dir = os.path.join(param.output_folder, self.dataset_folder_name)
+            save_dir = os.path.join(param.output_folder, self.dataset_folder_name)
 
         annot_dir_voc, json_coco_train_bbox, json_coco_test_bbox, \
             json_coco_train_seg, json_coco_test_seg = make_folders_and_files(
