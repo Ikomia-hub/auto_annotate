@@ -305,7 +305,7 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         # URL of documentation
         self.info.documentation_link = ""
         # Code source repository
-        self.info.repository = ""
+        self.info.repository = "https://github.com/Ikomia-hub/auto_annotate"
         # Keywords used for search
         self.info.keywords = "auto-annotation, labelling, groundingdino, SAM, MobileSAM, segment anything"
         self.info.algo_type = core.AlgoType.DATASET
