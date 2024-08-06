@@ -53,7 +53,8 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
 
         # Input image folder
         self.browse_in_folder = pyqtutils.append_browse_file(
-            self.grid_layout, label="Image folder",
+            self.grid_layout,
+            label="Image folder",
             path=self.parameters.image_folder,
             tooltip="Select folder",
             mode=QFileDialog.Directory
@@ -66,9 +67,10 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
 
         # Prompt
         self.edit_prompt = pyqtutils.append_browse_file(
-            self.grid_layout, label="Classes list or file (.txt)",
+            self.grid_layout,
+            label="Classes list or file (.txt)",
             path=self.parameters.classes,
-            filter="*.txt",
+            file_filter="*.txt",
         )
 
         self.checkbox_edit_model = QCheckBox("Show model settings:")
@@ -171,7 +173,8 @@ class AutoAnnotateWidget(core.CWorkflowTaskWidget):
 
         # Output folder
         self.browse_out_folder = pyqtutils.append_browse_file(
-            self.grid_layout, label="Output folder",
+            self.grid_layout,
+            label="Output folder",
             path=self.parameters.output_folder,
             tooltip="Select folder",
             mode=QFileDialog.Directory
