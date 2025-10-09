@@ -134,6 +134,24 @@ class AutoAnnotate(core.CWorkflowTask):
             result_masks.append(masks[index])
         return np.array(result_masks)
 
+    def _load_model(self):
+        param = self.get_param_object()
+        self.device = torch.device("cuda") if param.cuda else torch.device("cpu")
+
+        self.grounding_dino_model = load_grounding_dino(
+            param.model_name_grounding_dino,
+            self.device
+        )
+
+        if param.task == "segmentation":
+            self.sam_predictor = load_sam_predictor(param.model_name_sam, self.device)
+
+        param.update = False
+
+    def init_long_process(self):
+        self._load_model()
+        super().init_long_process()
+
     def run(self):
         # Core function of your process
         # Call begin_task_run() for initialization
@@ -141,17 +159,8 @@ class AutoAnnotate(core.CWorkflowTask):
         # Get parameters :
         param = self.get_param_object()
 
-        if param.update or self.grounding_dino_model or self.sam_predictor is None:
-            self.device = torch.device("cuda") if param.cuda else torch.device("cpu")
-
-            self.grounding_dino_model = load_grounding_dino(
-                                            param.model_name_grounding_dino,
-                                            self.device
-                                            )
-            if param.task == "segmentation":
-                self.sam_predictor = load_sam_predictor(param.model_name_sam, self.device)
-
-            param.update = False
+        if param.update:
+            self._load_model()
 
         # Get list of images
         image_paths = sv.list_files_with_extensions(
