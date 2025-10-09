@@ -1,37 +1,25 @@
 # Copyright (C) 2021 Ikomia SAS
-# Contact: https://www.ikomia.com
-#
-# This file is part of the IkomiaStudio software.
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+# Contact: https://www.ikomia.ai
 import copy
+import os
+import shutil
+from datetime import datetime
+from tqdm import tqdm
+
+import torch
+import numpy as np
+
 from ikomia import core, dataprocess, utils
+from ikomia.dnn.dataset import read_class_names
+import cv2
+
+import supervision as sv
+
 from segment_anything import SamPredictor
+
 from auto_annotate.utils.voc2coco import convert, get_xml_files
 from auto_annotate.utils.load_models import load_grounding_dino, load_sam_predictor
 from auto_annotate.utils.auto_annot_utils import make_folders_and_files, enhance_class_name
-from ikomia.dnn.dataset import read_class_names
-import os
-import torch
-import numpy as np
-import cv2
-import supervision as sv
-from tqdm import tqdm
-from datetime import datetime
-import shutil
-
 
 
 # --------------------
@@ -84,23 +72,24 @@ class AutoAnnotateParam(core.CWorkflowTaskParam):
         self.export_coco = utils.strtobool(params["export_coco"])
 
     def get_values(self):
-        params = {}
-        params["classes"] = str(self.classes)
-        params["task"] = str(self.task)
-        params["dataset_split_ratio"] = str(self.dataset_split_ratio)
-        params["model_name_grounding_dino"] = str(self.model_name_grounding_dino)
-        params["model_name_sam"] = str(self.model_name_sam)
-        params["conf_thres"] = str(self.conf_thres)
-        params["conf_thres_text"] = str(self.conf_thres_text)
-        params["cuda"] = str(self.cuda)
-        params["min_relative_object_size"] = str(self.min_relative_object_size)
-        params["max_relative_object_size"] = str(self.max_relative_object_size)
-        params["approximation_percent"] = str(self.approximation_percent)
-        params["image_folder"] = str(self.image_folder)
-        params["output_dataset_name"] = str(self.output_dataset_name)
-        params["output_folder"] = str(self.output_folder)
-        params["export_pascal_voc"] = str(self.export_pascal_voc)
-        params["export_coco"] = str(self.export_coco)
+        params = {
+            "classes": str(self.classes),
+            "task": str(self.task),
+            "dataset_split_ratio": str(self.dataset_split_ratio),
+            "model_name_grounding_dino": str(self.model_name_grounding_dino),
+            "model_name_sam": str(self.model_name_sam),
+            "conf_thres": str(self.conf_thres),
+            "conf_thres_text": str(self.conf_thres_text),
+            "cuda": str(self.cuda),
+            "min_relative_object_size": str(self.min_relative_object_size),
+            "max_relative_object_size": str(self.max_relative_object_size),
+            "approximation_percent": str(self.approximation_percent),
+            "image_folder": str(self.image_folder),
+            "output_dataset_name": str(self.output_dataset_name),
+            "output_folder": str(self.output_folder),
+            "export_pascal_voc": str(self.export_pascal_voc),
+            "export_coco": str(self.export_coco)
+        }
         return params
 
 # --------------------
@@ -166,8 +155,7 @@ class AutoAnnotate(core.CWorkflowTask):
 
         # Get list of images
         image_paths = sv.list_files_with_extensions(
-            directory=param.image_folder
-            ,
+            directory=param.image_folder,
             extensions=self.img_extension
         )
 
@@ -176,6 +164,7 @@ class AutoAnnotate(core.CWorkflowTask):
             class_list = read_class_names(param.classes)
         else:
             class_list = param.classes.split(', ')
+
         self.class_list_enhanced = enhance_class_name(class_list)
 
         images = {}
@@ -212,9 +201,11 @@ class AutoAnnotate(core.CWorkflowTask):
         self.dataset_folder_name = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         if not os.path.isdir(param.output_folder):
                 os.mkdir(param.output_folder)
+
         if param.output_dataset_name:
             dataset_dir = os.path.join(param.output_folder, param.output_dataset_name)
             save_dir = os.path.join(dataset_dir, self.dataset_folder_name)
+
             if not os.path.isdir(dataset_dir):
                 os.mkdir(dataset_dir)
         else:
@@ -301,7 +292,8 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         # relative path -> as displayed in Ikomia application process tree
         self.info.icon_path = "icons/icon.png"
         self.info.path = "Plugins/Python/Dataset"
-        self.info.version = "1.0.2"
+        self.info.version = "1.1.0"
+        self.info.min_ikomia_version = "0.15.0"
         self.info.authors = "Liu et al. (GroundingDINO), Kirillov et al. (SAM), Zhang et al. (MobileSAM)"
         self.info.article = ""
         self.info.journal = "ArXiv"
@@ -315,6 +307,10 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         self.info.keywords = "auto-annotation, labelling, groundingdino, SAM, MobileSAM, segment anything"
         self.info.algo_type = core.AlgoType.DATASET
         self.info.algo_tasks = "OBJECT_DETECTION,INSTANCE_SEGMENTATION,PANOPTIC_SEGMENTATION,IMAGE_CAPTIONING"
+        self.info.hardware_config.min_cpu = 4
+        self.info.hardware_config.min_ram = 16
+        self.info.hardware_config.gpu_required = True
+        self.info.hardware_config.min_vram = 16
 
     def create(self, param=None):
         # Create process object
