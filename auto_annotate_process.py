@@ -303,6 +303,7 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         self.info.path = "Plugins/Python/Dataset"
         self.info.version = "1.2.0"
         self.info.min_ikomia_version = "0.16.0"
+        self.info.max_python_version = "3.12"
         self.info.authors = "Liu et al. (GroundingDINO), Kirillov et al. (SAM), Zhang et al. (MobileSAM)"
         self.info.article = ""
         self.info.journal = "ArXiv"
