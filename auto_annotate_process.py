@@ -301,8 +301,8 @@ class AutoAnnotateFactory(dataprocess.CTaskFactory):
         # relative path -> as displayed in Ikomia application process tree
         self.info.icon_path = "icons/icon.png"
         self.info.path = "Plugins/Python/Dataset"
-        self.info.version = "1.1.0"
-        self.info.min_ikomia_version = "0.15.0"
+        self.info.version = "1.2.0"
+        self.info.min_ikomia_version = "0.16.0"
         self.info.authors = "Liu et al. (GroundingDINO), Kirillov et al. (SAM), Zhang et al. (MobileSAM)"
         self.info.article = ""
         self.info.journal = "ArXiv"
